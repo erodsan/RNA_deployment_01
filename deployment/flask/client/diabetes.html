@@ -1,0 +1,145 @@
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO 8859-1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Predictor de Diabetes</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.4/angular-material.min.css">
+</head>
+
+<body ng-app="myApp" ng-cloak style="background-color: #efefef" ng-controller="myCtrl" layout="column">
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <span>**** Predictor de Diabetes ****</span>
+    </div>
+  </md-toolbar>
+  <md-content flex style="width:420">
+    <md-card>
+      <md-card-content>
+        <p><em>Ingrese los datos del paciente:</em></p>
+       </md-card-content>
+    </md-card>
+    <md-card>
+      <md-card-content>
+
+        <div layout="row" layout-align="space-between center">
+          <span>Embarazos</span>
+          <md-slider-container> {: data.Embarazos :}&nbsp;
+            <md-slider aria-label="Slider" min="0" max="20" ng-model="data.Embarazos" id="emb-slider"></md-slider>
+          </md-slider-container>
+        </div>
+
+	<div layout="row" layout-align="space-between center">
+          <span>Glucosa</span>
+          <md-slider-container> {: data.Glucosa :}&nbsp;
+            <md-slider aria-label="Slider" min="0" max="200" ng-model="data.Glucosa" id="glu-slider"></md-slider>
+          </md-slider-container>
+        </div>
+      
+
+
+        <div layout="row" layout-align="space-between center">
+          <span>Presion</span>
+          <md-slider-container> {: data.Presion :}&nbsp;
+            <md-slider aria-label="Slider" min="0" max="150" ng-model="data.Presion" id="pre-slider"></md-slider>
+          </md-slider-container>
+        </div>
+
+        <div layout="row" layout-align="space-between center">
+          <span>EspesorPiel</span>
+          <md-slider-container> {: data.EspesorPiel :}&nbsp;
+            <md-slider aria-label="Slider" min="0" max="100" ng-model="data.EspesorPiel" id="ep-slider"></md-slider>
+          </md-slider-container>
+        </div>
+
+ 	<div layout="row" layout-align="space-between center">
+          <span>Insulina</span>
+          <md-slider-container> {: data.Insulina :}&nbsp;
+            <md-slider aria-label="Slider" min="0" max="850" ng-model="data.Insulina" id="ins-slider"></md-slider>
+          </md-slider-container>
+        </div>
+
+ 
+
+
+        <div layout="row" layout-align="space-between center">
+          <span>IMC</span>
+          <md-slider-container> {: data.IMC :}&nbsp;
+            <md-slider aria-label="Slider" min="15" max="70" ng-model="data.IMC" id="imc-slider"></md-slider>
+          </md-slider-container>
+        </div>
+
+        <div layout="row" layout-align="space-between center">
+          <span>DiabetesFamiliar</span>
+          <md-slider-container> {: data.DiabetesFamiliar :}&nbsp;
+            <md-slider aria-label="Slider" min="0" max="2.5" ng-model="data.DiabetesFamiliar" id="df-slider"></md-slider>
+          </md-slider-container>
+        </div>
+
+ 	<div layout="row" layout-align="space-between center">
+          <span>Edad</span>
+          <md-slider-container> {: data.Edad :}&nbsp;
+            <md-slider aria-label="Slider" min="18" max="85" ng-model="data.Edad" id="edad-slider"></md-slider>
+          </md-slider-container>
+        </div>
+
+
+
+      </md-card-content>
+
+      <md-card-actions layout="row" layout-align="end center">
+        <md-button ng-click="submit()" class="md-accent md-raised">Predecir</md-button>
+      </md-card-actions>
+
+    </md-card>
+    <md-card>
+      <md-card-content>
+        <div layout="row" layout-align="space-between center">
+          <span style="font-weight:bold">Predicción:</span>
+          <span style="color:blue;font-weight:bold">{: result :}</span>
+        </div>
+      </md-card-content>
+    </md-card>
+  </md-content>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.4/angular-material.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.js"></script>
+
+  <script>
+    var app = angular.module('myApp', ['ngMaterial']);
+    app.config(['$interpolateProvider', function($interpolateProvider) {
+      $interpolateProvider.startSymbol('{:');
+      $interpolateProvider.endSymbol(':}');
+    }]);
+    app.config(function($mdThemingProvider) {
+      $mdThemingProvider.theme('default')
+        .primaryPalette('blue-grey')
+        .accentPalette('orange');
+    });
+    app.controller('myCtrl', ['$scope', '$http',
+      function($scope, $http) {
+        $scope.data = {};
+        $scope.submit = function() {
+          console.log($scope.data)
+          $scope.result = "Wait...";
+          $http({
+            method : 'POST',
+		  url : 'http://35.166.44.83:5000/enfermedad/paciente/',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: $scope.data
+          }).success(function(data, status, headers, config) {
+            $scope.result = data;
+          }).error(function(data, status, headers, config) {
+            $scope.result = 'Error';
+          });
+        }
+      }
+    ]);
+  </script>
+</body>
+</html>
